@@ -19,6 +19,7 @@ public class SalaryInfo {
         LocalDate startDate = LocalDate.parse(dateFrom, FORMATTER);
         LocalDate endDate = LocalDate.parse(dateTo, FORMATTER);
         Map<String, Integer> salaries = new LinkedHashMap<>();
+
         for (String name : names) {
             salaries.put(name, 0);
         }
