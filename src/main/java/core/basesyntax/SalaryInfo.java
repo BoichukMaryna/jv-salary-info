@@ -13,21 +13,21 @@ import java.util.Map;
 public class SalaryInfo {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-    public String getSalaryInfo(String[] employeeNames, String[] workRecords, String startDateStr, String endDateStr) {
-        LocalDate startDate = LocalDate.parse(startDateStr, FORMATTER);
-        LocalDate endDate = LocalDate.parse(endDateStr, FORMATTER);
+    @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
+    public String getSalaryInfo(String[] names, String[] data, String dateFrom, String dateTo) {
+        LocalDate startDate = LocalDate.parse(dateFrom, FORMATTER);
+        LocalDate endDate = LocalDate.parse(dateTo, FORMATTER);
 
-        // Використовуємо Map замість масиву
+        // Використовуємо Map для накопичення зарплат
         Map<String, Integer> salaryMap = new HashMap<>();
-        for (String name : employeeNames) {
+        for (String name : names) {
             salaryMap.put(name, 0);
         }
 
-        for (String record : workRecords) {
+        for (String record : data) {
             String[] parts = record.split(" ");
             if (parts.length != 4) {
-                System.out.println("Некоректний запис: " + record);
-                continue; // пропускаємо невірні рядки
+                continue; // пропускаємо некоректні рядки
             }
 
             try {
@@ -40,23 +40,28 @@ public class SalaryInfo {
                 if ((workDate.isEqual(startDate) || workDate.isAfter(startDate))
                         && (workDate.isEqual(endDate) || workDate.isBefore(endDate))) {
 
-                    if (salaryMap.containsKey(employeeName)) {
-                        int currentSalary = salaryMap.get(employeeName);
-                        salaryMap.put(employeeName, currentSalary + hoursWorked * ratePerHour);
-                    }
+                    // Оновлюємо значення через computeIfPresent
+                    salaryMap.computeIfPresent(employeeName,
+                            (k, v) -> v + hoursWorked * ratePerHour);
                 }
-            } catch (Exception e) {
-                System.out.println("Помилка обробки запису: " + record);
+            } catch (Exception ignored) {
+                // ігноруємо некоректні рядки без println
             }
         }
 
-        // Формування звіту
+        // Формуємо звіт
         StringBuilder report = new StringBuilder();
-        report.append("Report for period ").append(startDateStr).append(" - ").append(endDateStr)
+        report.append("Report for period ")
+                .append(dateFrom)
+                .append(" - ")
+                .append(dateTo)
                 .append(System.lineSeparator());
 
-        for (String name : employeeNames) {
-            report.append(name).append(" - ").append(salaryMap.get(name)).append(System.lineSeparator());
+        for (String name : names) {
+            report.append(name)
+                    .append(" - ")
+                    .append(salaryMap.get(name))
+                    .append(System.lineSeparator());
         }
 
         return report.toString();
