@@ -3,21 +3,28 @@ package core.basesyntax;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+
 public class SalaryInfo {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+    // Константи для індексів у масиві parts
+    private static final int DATE_INDEX = 0;
+    private static final int NAME_INDEX = 1;
+    private static final int HOURS_INDEX = 2;
+    private static final int RATE_INDEX = 3;
 
     public String getSalaryInfo(String[] names, String[] data, String dateFrom, String dateTo) {
         LocalDate startDate = LocalDate.parse(dateFrom, FORMATTER);
         LocalDate endDate = LocalDate.parse(dateTo, FORMATTER);
 
-        int[] salaries = new int[names.length]; // масив для зарплат співробітників
+        int[] salaries = new int[names.length];
 
         for (String record : data) {
             String[] parts = record.split(" ");
-            LocalDate workDate = LocalDate.parse(parts[0], FORMATTER);
-            String employeeName = parts[1];
-            int hoursWorked = Integer.parseInt(parts[2]);
-            int ratePerHour = Integer.parseInt(parts[3]);
+            LocalDate workDate = LocalDate.parse(parts[DATE_INDEX], FORMATTER);
+            String employeeName = parts[NAME_INDEX];
+            int hoursWorked = Integer.parseInt(parts[HOURS_INDEX]);
+            int ratePerHour = Integer.parseInt(parts[RATE_INDEX]);
 
             if ((workDate.isAfter(startDate) || workDate.isEqual(startDate))
                     && (workDate.isBefore(endDate) || workDate.isEqual(endDate))) {
@@ -43,6 +50,6 @@ public class SalaryInfo {
                     .append(System.lineSeparator());
         }
 
-        return report.toString().trim();
+        return report.toString(); // без .trim()
     }
 }
