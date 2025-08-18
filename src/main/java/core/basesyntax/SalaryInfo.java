@@ -7,43 +7,56 @@ package core.basesyntax;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
+import java.util.HashMap;
+import java.util.Map;
 
 public class SalaryInfo {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-    private static final int DATE_INDEX = 0;
-    private static final int NAME_INDEX = 1;
-    private static final int HOURS_INDEX = 2;
-    private static final int RATE_INDEX = 3;
 
-    public SalaryInfo() {
-    }
+    public String getSalaryInfo(String[] employeeNames, String[] workRecords, String startDateStr, String endDateStr) {
+        LocalDate startDate = LocalDate.parse(startDateStr, FORMATTER);
+        LocalDate endDate = LocalDate.parse(endDateStr, FORMATTER);
 
-    public String getSalaryInfo(String[] names, String[] data, String dateFrom, String dateTo) {
-        LocalDate startDate = LocalDate.parse(dateFrom, FORMATTER);
-        LocalDate endDate = LocalDate.parse(dateTo, FORMATTER);
-        int[] salaries = new int[names.length];
+        // Використовуємо Map замість масиву
+        Map<String, Integer> salaryMap = new HashMap<>();
+        for (String name : employeeNames) {
+            salaryMap.put(name, 0);
+        }
 
-        for(String record : data) {
+        for (String record : workRecords) {
             String[] parts = record.split(" ");
-            LocalDate workDate = LocalDate.parse(parts[0], FORMATTER);
-            String employeeName = parts[1];
-            int hoursWorked = Integer.parseInt(parts[2]);
-            int ratePerHour = Integer.parseInt(parts[3]);
-            if ((workDate.isAfter(startDate) || workDate.isEqual(startDate)) && (workDate.isBefore(endDate) || workDate.isEqual(endDate))) {
-                for(int i = 0; i < names.length; ++i) {
-                    if (names[i].equals(employeeName)) {
-                        salaries[i] += hoursWorked * ratePerHour;
+            if (parts.length != 4) {
+                System.out.println("Некоректний запис: " + record);
+                continue; // пропускаємо невірні рядки
+            }
+
+            try {
+                LocalDate workDate = LocalDate.parse(parts[0], FORMATTER);
+                String employeeName = parts[1];
+                int hoursWorked = Integer.parseInt(parts[2]);
+                int ratePerHour = Integer.parseInt(parts[3]);
+
+                // Перевірка діапазону дат
+                if ((workDate.isEqual(startDate) || workDate.isAfter(startDate))
+                        && (workDate.isEqual(endDate) || workDate.isBefore(endDate))) {
+
+                    if (salaryMap.containsKey(employeeName)) {
+                        int currentSalary = salaryMap.get(employeeName);
+                        salaryMap.put(employeeName, currentSalary + hoursWorked * ratePerHour);
                     }
                 }
+            } catch (Exception e) {
+                System.out.println("Помилка обробки запису: " + record);
             }
         }
 
+        // Формування звіту
         StringBuilder report = new StringBuilder();
-        report.append("Report for period ").append(dateFrom).append(" - ").append(dateTo).append(System.lineSeparator());
+        report.append("Report for period ").append(startDateStr).append(" - ").append(endDateStr)
+                .append(System.lineSeparator());
 
-        for(int i = 0; i < names.length; ++i) {
-            report.append(names[i]).append(" - ").append(salaries[i]).append(System.lineSeparator());
+        for (String name : employeeNames) {
+            report.append(name).append(" - ").append(salaryMap.get(name)).append(System.lineSeparator());
         }
 
         return report.toString();
