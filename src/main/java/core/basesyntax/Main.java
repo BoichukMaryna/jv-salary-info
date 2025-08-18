@@ -23,6 +23,5 @@ public class Main {
 
         SalaryInfo salaryInfo = new SalaryInfo();
         String report = salaryInfo.getSalaryInfo(names, data, dateFrom, dateTo);
-        System.out.println(report);
     }
 }

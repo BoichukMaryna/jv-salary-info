@@ -10,6 +10,10 @@ import java.time.format.DateTimeFormatter;
 
 public class SalaryInfo {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private static final int DATE_INDEX = 0;
+    private static final int NAME_INDEX = 1;
+    private static final int HOURS_INDEX = 2;
+    private static final int RATE_INDEX = 3;
 
     public String getSalaryInfo(String[] names, String[] data, String dateFrom, String dateTo) {
         LocalDate startDate = LocalDate.parse(dateFrom, FORMATTER);
@@ -18,10 +22,10 @@ public class SalaryInfo {
 
         for (String record : data) {
             String[] parts = record.split(" ");
-            LocalDate workDate = LocalDate.parse(parts[0], FORMATTER);
-            String employeeName = parts[1];
-            int hoursWorked = Integer.parseInt(parts[2]);
-            int ratePerHour = Integer.parseInt(parts[3]);
+            LocalDate workDate = LocalDate.parse(parts[DATE_INDEX], FORMATTER);
+            String employeeName = parts[NAME_INDEX];
+            int hoursWorked = Integer.parseInt(parts[HOURS_INDEX]);
+            int ratePerHour = Integer.parseInt(parts[RATE_INDEX]);
 
             if ((workDate.isEqual(startDate) || workDate.isAfter(startDate))
                     && (workDate.isEqual(endDate) || workDate.isBefore(endDate))) {
