@@ -27,8 +27,9 @@ public class SalaryInfo {
             int hoursWorked = Integer.parseInt(parts[HOURS_INDEX]);
             int ratePerHour = Integer.parseInt(parts[RATE_INDEX]);
 
-            if ((workDate.isEqual(startDate) || workDate.isAfter(startDate))
-                    && (workDate.isEqual(endDate) || workDate.isBefore(endDate))) {
+            if ((workDate.isEqual(startDate) || workDate.isAfter(startDate)) &&
+                    (workDate.isEqual(endDate) || workDate.isBefore(endDate))) {
+
                 for (int i = 0; i < names.length; i++) {
                     if (names[i].equals(employeeName)) {
                         salaries[i] += hoursWorked * ratePerHour;
