@@ -7,9 +7,10 @@ import java.util.StringJoiner;
 public class SalaryInfo {
     private static final DateTimeFormatter
             DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private static final int DATE_INDEX = 0;
     private static final int NAME_INDEX = 1;
     private static final int HOURS_INDEX = 2;
-    private static final int SALARY_PER_HOUR_INDEX = 3;
+    private static final int RATE_INDEX = 3;
 
     public String getSalaryInfo(String[] names, String[] data, String dateFrom, String dateTo) {
         StringBuilder result = new StringBuilder();
@@ -20,12 +21,12 @@ public class SalaryInfo {
         int[] salaryPerEmployee = new int[names.length];
         for (String date : data) {
             String[] parts = date.split(" ");
-            LocalDate employeeDate = LocalDate.parse(parts[0], DATE_TIME_FORMATTER);
+            LocalDate employeeDate = LocalDate.parse(parts[DATE_INDEX], DATE_TIME_FORMATTER);
             if (!employeeDate.isBefore(from) && !employeeDate.isAfter(to)) {
                 for (int j = 0; j < names.length; j++) {
                     if (parts[NAME_INDEX].equals(names[j])) {
                         salaryPerEmployee[j] += Integer.parseInt(parts[HOURS_INDEX])
-                                * Integer.parseInt(parts[SALARY_PER_HOUR_INDEX]);
+                                * Integer.parseInt(parts[RATE_INDEX]);
                     }
                 }
             }
